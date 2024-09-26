@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>TIDE Webmail</title>
+    <link rel="stylesheet" href="{{ static_url("mail.css") }}" type="text/css">
+  </head>
+  <body>
+    <div id="body">
+      <div id="folders">
+        {% for mailbox in mailboxes %}
+          {% module Template("mailbox.html", mailbox=mailbox) %}
+        {% end %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fasthosts Webmail</title>
+    <link rel="stylesheet" href="{{ static_url("mail.css") }}" type="text/css">
+  </head>
+  <body>
+    <div id="body">
+
+      {% if error %}
+          <span style="color: red">Error: {{ error }}</span><p>
+      {% end %}
+
+      <div id="folders">
+        {% for mailbox in mailboxes %}
+          {% module Template("mailbox.html", mailbox=mailbox) %}
+        {% end %}
+      </div>
+      <div id="emails">
+        <table>
+          <tr>
+            {% for (headers, email, uid) in emails %}
+            {% module Template("email.html", headers=headers, email=email, uid=uid, folder=folder) %}
+            {% end %}
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

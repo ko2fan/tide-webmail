@@ -1,0 +1,12 @@
+<td><div class="from">{{ headers["From"] }}</div></td>
+<td><div class="date">{{ headers["Date"] }}</div></td>
+<tr><td>
+    <div class="subject"><a href="/mail/folder/{{ folder }}/{{ uid }}">{{ headers["Subject"] }}</a></div>
+</td></tr>
+{% if email %}
+<tr>
+    <td>
+        {{ email }}
+    </td>
+</tr>
+{% end %}

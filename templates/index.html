@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fasthosts Webmail</title>
+    <link rel="stylesheet" href="{{ static_url("mail.css") }}" type="text/css">
+  </head>
+  <body>
+    <div id="body">
+      <div id="hosting-provider">
+        {% if error %}
+          <span style="color: red">Error: {{ error }}</span><p>
+        {% end %}
+
+        <form action="/mail" method="POST">
+          Username: <input class="form_input" name="username" type="text"><br>
+          Password: <input class="form_input" name="password" type="password"><br>
+          {% module xsrf_form_html() %}
+          <input class="form_input" type="submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
