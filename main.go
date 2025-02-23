@@ -177,6 +177,13 @@ func emailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if mbox.Messages == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{"emails": []interface{}{}})
+		log.Printf("%s %d %s %s", now, 200, r.URL.Path, "EmailsHandler: No emails to retrieve")
+		return
+	}
+
 	seqset := new(imap.SeqSet)
 	seqset.AddRange(1, mbox.Messages)
 
@@ -197,6 +204,7 @@ func emailsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		emails = append(emails, email)
 	}
+
 	if err := <-done; err != nil {
 		log.Printf("%s %d %s %s", now, http.StatusInternalServerError, r.URL.Path, "EmailsHandler: Failed to list folders")
 		http.Error(w, "Error fetching emails", http.StatusInternalServerError)
