@@ -10,7 +10,6 @@ This is a WIP project that is still very much in development. I would not advise
 - [What the API provides](#what-the-api-provides)
 - [Dependencies](#dependencies)
 - [Usage](#usage)
-- [Author](#author)
 
 ### Why?
 
@@ -42,8 +41,3 @@ $ go build main.go
 $ ./tide
 ```
 
-
-### Author
----
-
-I am David Athay and I am currently building one of the largest mail platforms in Europe,
