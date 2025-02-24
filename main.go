@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -48,6 +47,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	imapClient, err := client.DialTLS(req.Server, nil)
+	if err != nil {
+		log.Printf("%s %d %s %s", now, http.StatusInternalServerError, r.URL.Path, "LoginHandler: Failed to connect to server")
+		http.Error(w, "Could not connect to IMAP server", http.StatusInternalServerError)
+		return
+	}
+	defer imapClient.Logout()
+
+	if err := imapClient.Login(req.Username, req.Password); err != nil {
+		log.Printf("%s %d %s %s", now, http.StatusUnauthorized, r.URL.Path, "LoginHandler: Failed to login")
+		http.Error(w, "IMAP login failed", http.StatusUnauthorized)
+		return
+	}
+
 	token := uuid.New().String()
 
 	sessions.Lock()
@@ -82,14 +95,7 @@ func foldersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set up TLS configuration with TLS 1.2 and an AES-SHA256 cipher
-	// as this is required for Fasthosts
-	tlsConfig := &tls.Config{
-		MinVersion:   tls.VersionTLS12,
-		CipherSuites: []uint16{tls.TLS_RSA_WITH_AES_256_CBC_SHA},
-	}
-
-	imapClient, err := client.DialTLS(sess.Server, tlsConfig)
+	imapClient, err := client.DialTLS(sess.Server, nil)
 	if err != nil {
 		log.Printf("%s %d %s %s", now, http.StatusInternalServerError, r.URL.Path, "FoldersHandler: Failed to connect to server")
 		http.Error(w, "Could not connect to IMAP server", http.StatusInternalServerError)
@@ -151,12 +157,7 @@ func emailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tlsConfig := &tls.Config{
-		MinVersion:   tls.VersionTLS12,
-		CipherSuites: []uint16{tls.TLS_RSA_WITH_AES_256_CBC_SHA},
-	}
-
-	imapClient, err := client.DialTLS(sess.Server, tlsConfig)
+	imapClient, err := client.DialTLS(sess.Server, nil)
 	if err != nil {
 		log.Printf("%s %d %s %s", now, http.StatusInternalServerError, r.URL.Path, "EmailsHandler: Failed to connect to server")
 		http.Error(w, "Could not connect to IMAP server", http.StatusInternalServerError)
@@ -250,12 +251,7 @@ func emailContentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tlsConfig := &tls.Config{
-		MinVersion:   tls.VersionTLS12,
-		CipherSuites: []uint16{tls.TLS_RSA_WITH_AES_256_CBC_SHA},
-	}
-
-	imapClient, err := client.DialTLS(sess.Server, tlsConfig)
+	imapClient, err := client.DialTLS(sess.Server, nil)
 	if err != nil {
 		log.Printf("%s %d %s %s",
 			now,
